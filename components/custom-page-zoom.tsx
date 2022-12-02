@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
 import { Page } from "react-pdf";
 
 export type CustomPageProps = {
@@ -24,6 +24,7 @@ const CustomPage: FC<CustomPageProps> = ({
   useEffect(() => {
     if (isLoading && renderedScale) {
       onPageRendered(pageNumber - 1, false);
+      // "fake" zoom with css
       setCssScale(scale / renderedScale);
     }
   }, [
@@ -64,4 +65,4 @@ const CustomPage: FC<CustomPageProps> = ({
   );
 };
 
-export default CustomPage;
+export default memo(CustomPage);

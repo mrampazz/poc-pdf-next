@@ -5,13 +5,36 @@ import { Document, pdfjs } from "react-pdf";
 import Toolbar from "../components/toolbar";
 import CustomPage from "../components/custom-page-zoom";
 
+function useDebounce(value: any, delay: number) {
+  // State and setters for debounced value
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(
+    () => {
+      // Update debounced value after delay
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      // Cancel the timeout if value changes (also on delay change or unmount)
+      // This is how we prevent debounced value from updating if value is changed ...
+      // .. within the delay period. Timeout gets cleared and restarted.
+      return () => {
+        clearTimeout(handler);
+      };
+    },
+    [value, delay] // Only re-call effect if value or delay changes
+  );
+  return debouncedValue;
+}
+
 export default function Home() {
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+  const [totalPages, setTotalPages] = useState<number | null>(null);
+  const [pageState, setPageState] = useState<boolean[]>([]);
 
   const [scale, setScale] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number | null>(null);
+
+  // css scale, this will change depending of the user AND on when loading the canvas
   const [cssScale, setCssScale] = useState<number>(1);
-  const [pageState, setPageState] = useState<boolean[]>([]);
 
   const areAllPagesRendered = useMemo(() => {
     if (pageState.length > 0 && pageState.every((it) => !!it)) return true;
@@ -30,10 +53,10 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (areAllPagesRendered) {
+    if (areAllPagesRendered && cssScale !== 1) {
       setCssScale(1);
     }
-  }, [areAllPagesRendered]);
+  }, [areAllPagesRendered, cssScale]);
 
   return (
     <div className={styles.container}>
@@ -47,14 +70,14 @@ export default function Home() {
             transformOrigin: "0 0",
           }}
         >
-          <CustomPage
+          {/* <CustomPage
             key={1}
             pageNumber={1}
             scale={scale}
             setCssScale={setCssScale}
             onPageRendered={onPageRendered}
-          />
-          {/* {Array.from(Array(totalPages).keys()).map((pageNumber) => (
+          /> */}
+          {Array.from(Array(totalPages).keys()).map((pageNumber) => (
             <CustomPage
               key={pageNumber + 1}
               pageNumber={pageNumber + 1}
@@ -62,7 +85,7 @@ export default function Home() {
               setCssScale={setCssScale}
               onPageRendered={onPageRendered}
             />
-          ))} */}
+          ))}
         </div>
       </Document>
       <Toolbar scale={scale} setScale={setScale} />
