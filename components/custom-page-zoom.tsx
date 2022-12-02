@@ -6,6 +6,9 @@ export type CustomPageProps = {
   scale: number;
   setCssScale: (b: number) => void;
   onPageRendered: (p: number, h: boolean) => void;
+  renderedScale: number | null;
+  setRenderedScale: (b: number | null) => void;
+  areAllPagesRendered: boolean;
 };
 
 const CustomPage: FC<CustomPageProps> = ({
@@ -13,13 +16,17 @@ const CustomPage: FC<CustomPageProps> = ({
   scale,
   setCssScale,
   onPageRendered,
+  renderedScale,
+  setRenderedScale,
+  areAllPagesRendered,
 }) => {
   const [renderedPageNumber, setRenderedPageNumber] = useState<null | number>(
     null
   );
-  const [renderedScale, setRenderedScale] = useState<null | number>(null);
   const isLoading =
     renderedScale !== scale || renderedPageNumber !== pageNumber;
+  // console.log("scale", scale);
+  // console.log("renderedScale", renderedScale);
 
   useEffect(() => {
     if (isLoading && renderedScale) {
@@ -35,6 +42,9 @@ const CustomPage: FC<CustomPageProps> = ({
     pageNumber,
     onPageRendered,
   ]);
+
+  // console.count("counter");
+  if (pageNumber === 1) console.log("isLoading", isLoading);
 
   return (
     <>
