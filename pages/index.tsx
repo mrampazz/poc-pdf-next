@@ -31,8 +31,8 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState<number | null>(null);
   const [pageState, setPageState] = useState<boolean[]>([]);
 
+  // actual scale
   const [scale, setScale] = useState<number>(1);
-  const [renderedScale, setRenderedScale] = useState<number | null>(1);
 
   // css scale, this will change depending of the user AND on when loading the canvas
   const [cssScale, setCssScale] = useState<number>(1);
@@ -71,7 +71,7 @@ export default function Home() {
             transformOrigin: "0 0",
           }}
         >
-          <CustomPage
+          {/* <CustomPage
             key={1}
             pageNumber={1}
             scale={scale}
@@ -80,19 +80,16 @@ export default function Home() {
             renderedScale={renderedScale}
             setRenderedScale={setRenderedScale}
             areAllPagesRendered={areAllPagesRendered}
-          />
-          {/* {Array.from(Array(totalPages).keys()).map((pageNumber) => (
+          /> */}
+          {Array.from(Array(totalPages).keys()).map((pageNumber) => (
             <CustomPage
               key={pageNumber + 1}
               pageNumber={pageNumber + 1}
               scale={scale}
               setCssScale={setCssScale}
               onPageRendered={onPageRendered}
-              renderedScale={renderedScale}
-              setRenderedScale={setRenderedScale}
-              areAllPagesRendered={areAllPagesRendered}
             />
-          ))} */}
+          ))}
         </div>
       </Document>
       <Toolbar scale={scale} setScale={setScale} />

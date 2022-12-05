@@ -6,9 +6,6 @@ export type CustomPageProps = {
   scale: number;
   setCssScale: (b: number) => void;
   onPageRendered: (p: number, h: boolean) => void;
-  renderedScale: number | null;
-  setRenderedScale: (b: number | null) => void;
-  areAllPagesRendered: boolean;
 };
 
 const CustomPage: FC<CustomPageProps> = ({
@@ -16,10 +13,8 @@ const CustomPage: FC<CustomPageProps> = ({
   scale,
   setCssScale,
   onPageRendered,
-  renderedScale,
-  setRenderedScale,
-  areAllPagesRendered,
 }) => {
+  const [renderedScale, setRenderedScale] = useState<number | null>(1);
   const [renderedPageNumber, setRenderedPageNumber] = useState<null | number>(
     null
   );
@@ -43,9 +38,6 @@ const CustomPage: FC<CustomPageProps> = ({
     onPageRendered,
   ]);
 
-  // console.count("counter");
-  if (pageNumber === 1) console.log("isLoading", isLoading);
-
   return (
     <>
       {isLoading && renderedPageNumber && renderedScale ? (
@@ -64,8 +56,8 @@ const CustomPage: FC<CustomPageProps> = ({
         className={isLoading ? "mainPage" : ""}
         scale={scale}
         onRenderSuccess={() => {
-          setRenderedScale(scale);
           setRenderedPageNumber(pageNumber);
+          setRenderedScale(scale);
           onPageRendered(pageNumber - 1, true);
         }}
         renderTextLayer={false}
@@ -75,4 +67,7 @@ const CustomPage: FC<CustomPageProps> = ({
   );
 };
 
-export default memo(CustomPage);
+export default memo(CustomPage, (prev, next) => {
+  if (prev.scale === next.scale) true;
+  return false;
+});
